@@ -28,6 +28,8 @@ const uint8_t signals[][14] {
 
 Next thing is to define how a zero, one and inter-symbol pause is defined in timings of transmitting a signal.
 
+Please note that the numbers in ```timings[]```  are not milli- or micro seconds, they denote the number of the timer-ISR to be called. In this examples case the MCU clocks at 8 MHz and the timer1 is set to be called every 130ms.
+
 ```c
 const uint8_t timings[][3] = {
 	{11, 6},	// ZERO: [0 => clk low, 1=> clk high]
