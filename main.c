@@ -115,14 +115,14 @@ int main(void)
 
 	sei();									// Set Enable Interrupts
 
-	// PORTB = (1 << PB0) | (1 << PB1);		// pull up PB0 and PB1
+	PORTB = (1 << PB0) | (1 << PB1);		// pull up PB0 and PB1
 	DDRB = (0 << DDB1) | (0 << DDB0) | (1 << DDB2) | (1 << DDB3);	// declare PB0 and PB1 as input and PB2 + PB3 as output
 	
 	signalType = None; 
 
 	while (1) 
 	{
-		if (((PINB & (1 << PINB0)) == ( 1 << PINB0)) && signalType==None) {
+		if (((PINB & (1 << PINB0)) == ( 0 << PINB0)) && signalType==None) {
 			// button pressed (high)
 			
 			signalType = FrontDoor; 
@@ -134,7 +134,7 @@ int main(void)
 			TIMSK |= 1 << OCIE1A;			// Output Compare Interrupt Enable (timer 1, OCR1A)
 			PORTB |= (1 << PB3);
 		}
-		else if (((PINB & (1 << PINB1)) == (1 << PINB1)) && signalType==None) {
+		else if (((PINB & (1 << PINB1)) == (0 << PINB1)) && signalType==None) {
 			signalType = GarageDoor;
 			currSignalBit = 0;
 			sigCycleCounter=0;
@@ -145,10 +145,11 @@ int main(void)
 			PORTB |= (1 << PB3);
 		}
 		// all buttons low 
-		if ((PINB & ((1 << PINB0) | (1 << PINB1)) ) == 0 && signalType != None) {
+		if ((PINB & ((1 << PINB0) | (1 << PINB1)) ) == ((1 << PINB0) | (1 << PINB1)) && signalType != None) {
 			TIMSK &= ~(1 << OCIE1A);			// Output Compare Interrupt disabled (timer 1, OCR1A)
 			signalType = None;
-			PORTB &= ~(1 << PB3);
+			PORTB &= ~((1 << PB3) | (1 << PB2));
+			
 		}
 	}
 }
